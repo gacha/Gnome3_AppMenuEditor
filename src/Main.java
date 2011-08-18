@@ -10,10 +10,17 @@ import javax.swing.JFrame;
  * 
  */
 public class Main {
-	
-	public final static String ENTRY_DIRECTORY = "/usr/share/applications/";
-	
+
+	public static String ENTRY_DIRECTORY;
+
 	public static void main(final String[] args) {
+
+		if (args.length != 0) {
+			ENTRY_DIRECTORY = args[0];
+		} else {
+			ENTRY_DIRECTORY = "/usr/share/applications/";
+		}
+
 		final JFrame frame = new JFrame("Gnome 3 Application Menu Editor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(new FileListPanel(new File(ENTRY_DIRECTORY)));
