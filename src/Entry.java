@@ -10,6 +10,9 @@ import java.util.Scanner;
  */
 public class Entry {
 
+	/**
+	 * The file this entry is linked to.
+	 */
 	private final File file;
 
 	/*

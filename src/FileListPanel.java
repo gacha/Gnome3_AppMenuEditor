@@ -46,7 +46,6 @@ public class FileListPanel extends JPanel {
 	/*
 	 * The editor components.
 	 */
-
 	private final JTextField nameField;
 	private final JTextField commentField;
 	private final JTextField iconField;
@@ -76,7 +75,7 @@ public class FileListPanel extends JPanel {
 		entryList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				loadEntry(e.getFirstIndex());
+				loadEntry(entryList.getSelectedIndex());
 			}
 		});
 
