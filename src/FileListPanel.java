@@ -120,7 +120,7 @@ public class FileListPanel extends JPanel {
 	 *            entry index.
 	 * @throws IOException
 	 */
-	public void save(final int entry) throws IOException {
+	public void saveEntry(final int entry) throws IOException {
 		Entry e = entries.get(entry);
 		e.setName(nameField.getText());
 		e.setComment(commentField.getText());
@@ -205,7 +205,7 @@ public class FileListPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					save(entryList.getSelectedIndex());
+					saveEntry(entryList.getSelectedIndex());
 				} catch (IOException e) {
 					JOptionPane
 							.showMessageDialog(null,
