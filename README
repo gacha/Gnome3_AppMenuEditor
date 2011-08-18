@@ -2,4 +2,8 @@ A GUI for manipulating the Application menu of gnome 3, because it is not as eas
 
 Current State:
 Still some swing quirks to work out. Need to add a feature to create a new entry.
+For now, just touch the new desktop file in '/usr/share/applications/', and this editor should assist you in filling out the rest of the fields.
 -toriscope
+
+Fun Tips:
+If you want to use another '.desktop' directory besides the standard '/usr/share/applications/', you can just pass in the absolute path as a command-line parameter.
