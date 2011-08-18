@@ -117,14 +117,14 @@ public class Entry {
 	public String toContentString() {
 		StringBuffer s = new StringBuffer();
 		s.append(HEADER).append("\n");
-		s.append("Name").append(Name).append("\n");
-		s.append("Comment").append(Comment).append("\n");
-		s.append("Icon").append(Icon).append("\n");
-		s.append("Exec").append(Exec).append("\n");
-		s.append("Type").append(Type).append("\n");
-		s.append("Categories").append(Categories).append("\n");
-		s.append("Terminal").append(Terminal ? "true" : "false").append("\n");
-		s.append("StartupNotify").append(StartupNotify ? "true" : "false")
+		s.append("Name=").append(Name).append("\n");
+		s.append("Comment=").append(Comment).append("\n");
+		s.append("Icon=").append(Icon).append("\n");
+		s.append("Exec=").append(Exec).append("\n");
+		s.append("Type=").append(Type).append("\n");
+		s.append("Categories=").append(Categories).append("\n");
+		s.append("Terminal=").append(Terminal ? "true" : "false").append("\n");
+		s.append("StartupNotify=").append(StartupNotify ? "true" : "false")
 				.append("\n");
 		return s.toString();
 	}
@@ -163,5 +163,41 @@ public class Entry {
 
 	public boolean isStartupNotify() {
 		return StartupNotify;
+	}
+
+	public void setName(String name) {
+		Name = name;
+	}
+
+	public void setComment(String comment) {
+		Comment = comment;
+	}
+
+	public void setIcon(String icon) {
+		Icon = icon;
+	}
+
+	public void setExec(String exec) {
+		Exec = exec;
+	}
+
+	public void setTerminal(boolean terminal) {
+		Terminal = terminal;
+	}
+
+	public void setType(String type) {
+		Type = type;
+	}
+
+	public void setCategories(String categories) {
+		Categories = categories;
+	}
+
+	public void setStartupNotify(boolean startupNotify) {
+		StartupNotify = startupNotify;
+	}
+
+	public File getFile() {
+		return file;
 	}
 }

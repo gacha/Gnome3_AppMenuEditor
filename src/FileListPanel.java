@@ -1,12 +1,18 @@
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -30,6 +36,11 @@ public class FileListPanel extends JPanel {
 	 * The .desktop entries.
 	 */
 	private List<Entry> entries;
+
+	/**
+	 * The JList of all the current entries.
+	 */
+	private final JList<Entry> entryList;
 
 	/*
 	 * The editor components.
@@ -59,13 +70,12 @@ public class FileListPanel extends JPanel {
 				entries.add(new Entry(file));
 		}
 
-		JList<Entry> entryList = new JList<Entry>(
-				entries.toArray(new Entry[] {}));
+		entryList = new JList<Entry>(entries.toArray(new Entry[] {}));
 		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		entryList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectEntry(e.getFirstIndex());
+				loadEntry(e.getFirstIndex());
 			}
 		});
 
@@ -88,7 +98,7 @@ public class FileListPanel extends JPanel {
 	 * @param entry
 	 *            the entry index in the list.
 	 */
-	public void selectEntry(final int entry) {
+	public void loadEntry(final int entry) {
 		Entry e = entries.get(entry);
 		nameField.setText(e.getName());
 		commentField.setText(e.getComment());
@@ -116,25 +126,79 @@ public class FileListPanel extends JPanel {
 		panel.add(new JLabel("Name:"));
 		panel.add(nameField);
 
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+
 		panel.add(new JLabel("Comments:"));
 		panel.add(commentField);
+
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		panel.add(new JLabel("Icon Path:"));
 		panel.add(iconField);
 
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+
 		panel.add(new JLabel("Executable Path:"));
 		panel.add(execField);
+
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		panel.add(new JLabel("Type:"));
 		panel.add(typeField);
 
-		panel.add(new JLabel("Category:"));
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+
+		panel.add(new JLabel("Categories (';' seperated):"));
 		panel.add(categoryField);
+
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		panel.add(terminalBox);
 
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+
 		panel.add(startupNotifyBox);
 
+		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					save(entryList.getSelectedIndex());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		panel.add(saveButton);
+
 		return panel;
+	}
+
+	/**
+	 * Save the current editor content to the given entry and write to disk.
+	 * 
+	 * @param entry
+	 *            entry index.
+	 * @throws IOException
+	 */
+	public void save(final int entry) throws IOException {
+		Entry e = entries.get(entry);
+		e.setName(nameField.getText());
+		e.setComment(commentField.getText());
+		e.setIcon(iconField.getText());
+		e.setExec(execField.getText());
+		e.setType(typeField.getText());
+		e.setCategories(categoryField.getText());
+		e.setTerminal(terminalBox.isSelected());
+		e.setStartupNotify(startupNotifyBox.isSelected());
+
+		FileWriter writer = new FileWriter(e.getFile());
+		writer.write(e.toContentString());
+		writer.close();
+		JOptionPane.showMessageDialog(null, e.getFile().getName()
+				+ " has been saved!");
 	}
 }

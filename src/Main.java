@@ -23,6 +23,7 @@ public class Main {
 
 		final JFrame frame = new JFrame("Gnome 3 Application Menu Editor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setResizable(false);
 		frame.add(new FileListPanel(new File(ENTRY_DIRECTORY)));
 		frame.pack();
 		frame.setVisible(true);
