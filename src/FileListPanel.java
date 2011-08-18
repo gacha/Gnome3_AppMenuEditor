@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -135,11 +136,17 @@ public class FileListPanel extends JPanel {
 
 		panel.add(new JLabel("Icon Path:"));
 		panel.add(iconField);
+		JButton fileButton = new JButton("Find File");
+		fileButton.addActionListener(fileChooseActionListener(iconField));
+		panel.add(fileButton);
 
 		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		panel.add(new JLabel("Executable Path:"));
 		panel.add(execField);
+		fileButton = new JButton("Find File");
+		fileButton.addActionListener(fileChooseActionListener(execField));
+		panel.add(fileButton);
 
 		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
@@ -168,7 +175,9 @@ public class FileListPanel extends JPanel {
 				try {
 					save(entryList.getSelectedIndex());
 				} catch (IOException e) {
-					e.printStackTrace();
+					JOptionPane
+							.showMessageDialog(null,
+									"There has been an IO error! Try running this editor as root");
 				}
 			}
 		});
@@ -198,7 +207,29 @@ public class FileListPanel extends JPanel {
 		FileWriter writer = new FileWriter(e.getFile());
 		writer.write(e.toContentString());
 		writer.close();
+
 		JOptionPane.showMessageDialog(null, e.getFile().getName()
 				+ " has been saved!");
+	}
+
+	/**
+	 * This returns an ActionListener that spawns a file chooser and dumps the
+	 * resulting file into a given text field.
+	 * 
+	 * @param field
+	 *            the field to dump the value into.
+	 * @return the manufactured actionListener.
+	 */
+	private ActionListener fileChooseActionListener(final JTextField field) {
+		return new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fc = new JFileChooser();
+				int returnVal = fc.showOpenDialog(null);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					field.setText(fc.getSelectedFile().getAbsolutePath());
+				}
+			}
+		};
 	}
 }
