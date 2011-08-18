@@ -29,9 +29,8 @@ import javax.swing.event.ListSelectionListener;
  * @author toriscope
  * 
  */
+@SuppressWarnings("serial")
 public class FileListPanel extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The .desktop entries.
@@ -92,6 +91,10 @@ public class FileListPanel extends JPanel {
 		add(createEditorPanel(), BorderLayout.EAST);
 	}
 
+	/*
+	 * Entry I/O.
+	 */
+
 	/**
 	 * Refresh the edit box with the data at entry.
 	 * 
@@ -109,6 +112,36 @@ public class FileListPanel extends JPanel {
 		terminalBox.setSelected(e.isTerminal());
 		startupNotifyBox.setSelected(e.isStartupNotify());
 	}
+
+	/**
+	 * Save the current editor content to the given entry and write to disk.
+	 * 
+	 * @param entry
+	 *            entry index.
+	 * @throws IOException
+	 */
+	public void save(final int entry) throws IOException {
+		Entry e = entries.get(entry);
+		e.setName(nameField.getText());
+		e.setComment(commentField.getText());
+		e.setIcon(iconField.getText());
+		e.setExec(execField.getText());
+		e.setType(typeField.getText());
+		e.setCategories(categoryField.getText());
+		e.setTerminal(terminalBox.isSelected());
+		e.setStartupNotify(startupNotifyBox.isSelected());
+
+		FileWriter writer = new FileWriter(e.getFile());
+		writer.write(e.toContentString());
+		writer.close();
+
+		JOptionPane.showMessageDialog(null, e.getFile().getName()
+				+ " has been saved!");
+	}
+
+	/*
+	 * Support Functions.
+	 */
 
 	/**
 	 * This builds the editor panel, assigns proper labels.
@@ -183,32 +216,6 @@ public class FileListPanel extends JPanel {
 		panel.add(saveButton);
 
 		return panel;
-	}
-
-	/**
-	 * Save the current editor content to the given entry and write to disk.
-	 * 
-	 * @param entry
-	 *            entry index.
-	 * @throws IOException
-	 */
-	public void save(final int entry) throws IOException {
-		Entry e = entries.get(entry);
-		e.setName(nameField.getText());
-		e.setComment(commentField.getText());
-		e.setIcon(iconField.getText());
-		e.setExec(execField.getText());
-		e.setType(typeField.getText());
-		e.setCategories(categoryField.getText());
-		e.setTerminal(terminalBox.isSelected());
-		e.setStartupNotify(startupNotifyBox.isSelected());
-
-		FileWriter writer = new FileWriter(e.getFile());
-		writer.write(e.toContentString());
-		writer.close();
-
-		JOptionPane.showMessageDialog(null, e.getFile().getName()
-				+ " has been saved!");
 	}
 
 	/**

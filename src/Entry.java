@@ -113,7 +113,8 @@ public class Entry {
 	}
 
 	/**
-	 * Get the file content string.
+	 * Get the file content string. This is exactly what should be deposited
+	 * into the desktop file.
 	 * 
 	 * @return the exact file content string.
 	 */
