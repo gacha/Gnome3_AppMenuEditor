@@ -1,3 +1,4 @@
+import java.awt.Toolkit;
 import java.io.File;
 
 import javax.swing.JFrame;
@@ -23,6 +24,8 @@ public class Main {
 
 		final JFrame frame = new JFrame("Gnome 3 Application Menu Editor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
+				"images/icon.png"));
 		frame.setResizable(false);
 		frame.add(new FileListPanel(new File(ENTRY_DIRECTORY)));
 		frame.pack();
