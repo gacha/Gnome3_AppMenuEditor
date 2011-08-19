@@ -65,13 +65,9 @@ public class Entry {
 	 */
 	private boolean StartupNotify = false;
 
-	public Entry(final File file) {
+	public Entry(final File file) throws FileNotFoundException {
 		this.file = file;
-		try {
-			loadFromFile();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		loadFromFile();
 	}
 
 	/**
@@ -79,7 +75,7 @@ public class Entry {
 	 * 
 	 * @throws FileNotFoundException
 	 */
-	public void loadFromFile() throws FileNotFoundException {
+	private void loadFromFile() throws FileNotFoundException {
 		Scanner scan = new Scanner(file);
 		while (scan.hasNextLine()) {
 			String line = scan.nextLine();

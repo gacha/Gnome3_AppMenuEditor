@@ -209,9 +209,13 @@ public class FileListPanel extends JPanel {
 	public void refreshEntries() {
 		List<Entry> oldList = entries;
 		entries = new ArrayList<Entry>();
-		for (File file : DIRECTORY.listFiles()) {
-			if (file.getName().endsWith(".desktop"))
-				entries.add(new Entry(file));
+		try {
+			for (File file : DIRECTORY.listFiles()) {
+				if (file.getName().endsWith(".desktop"))
+					entries.add(new Entry(file));
+			}
+		} catch (IOException ex) {
+			ioWarning();
 		}
 
 		if (oldList == null || DIRECTORY.lastModified() > lastEdit) {
@@ -311,7 +315,7 @@ public class FileListPanel extends JPanel {
 
 		panel.add(new JLabel("Icon Path:"));
 		panel.add(iconField);
-		JButton fileButton = new JButton("Find File");
+		JButton fileButton = new JButton("Find Icon");
 		fileButton.addActionListener(fileChooseActionListener(iconField));
 		panel.add(fileButton);
 
@@ -319,7 +323,7 @@ public class FileListPanel extends JPanel {
 
 		panel.add(new JLabel("Executable Path:"));
 		panel.add(execField);
-		fileButton = new JButton("Find File");
+		fileButton = new JButton("Find Exec");
 		fileButton.addActionListener(fileChooseActionListener(execField));
 		panel.add(fileButton);
 
