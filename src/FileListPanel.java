@@ -33,6 +33,11 @@ import javax.swing.event.ListSelectionListener;
 public class FileListPanel extends JPanel {
 
 	/**
+	 * The directory where the entries are stored.
+	 */
+	private final File DIRECTORY;
+
+	/**
 	 * The .desktop entries.
 	 */
 	private List<Entry> entries;
@@ -40,7 +45,7 @@ public class FileListPanel extends JPanel {
 	/**
 	 * The JList of all the current entries.
 	 */
-	private final JList<Entry> entryList;
+	private JList<Entry> entryList;
 
 	/*
 	 * The editor components.
@@ -61,22 +66,10 @@ public class FileListPanel extends JPanel {
 	 *            the directory containing the .desktop entries.
 	 */
 	public FileListPanel(final File DIRECTORY) {
+
+		this.DIRECTORY = DIRECTORY;
+
 		setLayout(new BorderLayout());
-
-		entries = new ArrayList<Entry>();
-		for (File file : DIRECTORY.listFiles()) {
-			if (file.getName().contains(".desktop"))
-				entries.add(new Entry(file));
-		}
-
-		entryList = new JList<Entry>(entries.toArray(new Entry[] {}));
-		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		entryList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				loadEntry(entryList.getSelectedIndex());
-			}
-		});
 
 		nameField = new JTextField(30);
 		commentField = new JTextField(30);
@@ -87,8 +80,35 @@ public class FileListPanel extends JPanel {
 		terminalBox = new JCheckBox("Run in Terminal");
 		startupNotifyBox = new JCheckBox("Startup Notify");
 
-		add(new JScrollPane(entryList), BorderLayout.WEST);
 		add(createEditorPanel(), BorderLayout.EAST);
+
+		refreshEntries();
+	}
+
+	/*
+	 * Refresh the JList with he latest entries in the directory.
+	 */
+	public void refreshEntries() {
+		entries = new ArrayList<Entry>();
+		for (File file : DIRECTORY.listFiles()) {
+			if (file.getName().contains(".desktop"))
+				entries.add(new Entry(file));
+		}
+
+		Entry[] newEntries = entries.toArray(new Entry[] {});
+		if (entryList == null) {
+			entryList = new JList<Entry>(newEntries);
+			entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			entryList.addListSelectionListener(new ListSelectionListener() {
+				@Override
+				public void valueChanged(ListSelectionEvent e) {
+					loadEntry(entryList.getSelectedIndex());
+				}
+			});
+			add(new JScrollPane(entryList), BorderLayout.WEST);
+		} else {
+			entryList.setListData(newEntries);
+		}
 	}
 
 	/*
