@@ -90,18 +90,65 @@ public class FileListPanel extends JPanel {
 
 		add(createEditorPanel(), BorderLayout.EAST);
 
-		Timer refreshTimer = new Timer(5000, new ActionListener() {
+		JPanel listPanel = new JPanel();
+		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+
+		entryList = new JList<Entry>();
+		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		entryList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (entryList.getSelectedIndex() >= 0) {
+					loadEntry(entryList.getSelectedIndex());
+				}
+			}
+		});
+		listPanel.add(new JScrollPane(entryList), BorderLayout.WEST);
+
+		JButton addNewEntryButton = new JButton("Add Entry");
+		addNewEntryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					createEntry();
+				} catch (IOException e) {
+					JOptionPane
+							.showMessageDialog(null,
+									"There has been an IO error! Try running this editor as root");
+				}
+			}
+		});
+
+		listPanel.add(addNewEntryButton);
+
+		add(listPanel, BorderLayout.WEST);
+
+		refreshEntries();
+
+		new Timer(5000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				refreshEntries();
 			}
-		});
-		refreshTimer.start();
-
-		refreshEntries();
+		}).start();
 	}
 
-	/*
+	/**
+	 * Create an entry in the DIRECTORY, and loadEntry().
+	 * 
+	 * @throws IOException
+	 */
+	public void createEntry() throws IOException {
+		String s = JOptionPane
+				.showInputDialog("Name of new entry? (omit the extension)");
+		if (s != null && !s.isEmpty()) {
+			File f = new File(DIRECTORY + "/" + s + ".desktop");
+			new FileWriter(f).close();
+			loadEntry(new Entry(f));
+		}
+	}
+
+	/**
 	 * Refresh the JList with he latest entries in the directory.
 	 */
 	public void refreshEntries() {
@@ -112,21 +159,8 @@ public class FileListPanel extends JPanel {
 		}
 
 		Entry[] newEntries = entries.toArray(new Entry[] {});
-		if (entryList == null) {
-			entryList = new JList<Entry>(newEntries);
-			entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			entryList.addListSelectionListener(new ListSelectionListener() {
-				@Override
-				public void valueChanged(ListSelectionEvent e) {
-					if (entryList.getSelectedIndex() >= 0) {
-						loadEntry(entryList.getSelectedIndex());
-					}
-				}
-			});
-			add(new JScrollPane(entryList), BorderLayout.WEST);
-		} else {
-			entryList.setListData(newEntries);
-		}
+		entryList.setListData(newEntries);
+		Main.frame.pack();
 	}
 
 	/*
@@ -141,7 +175,17 @@ public class FileListPanel extends JPanel {
 	 *            the entry index in the list.
 	 */
 	public void loadEntry(final int entryIndex) {
-		Entry e = entries.get(entryIndex);
+		loadEntry(entries.get(entryIndex));
+	}
+
+	/**
+	 * Refresh the edit box with the data at entry. The current entry pointer is
+	 * set to the selected entry.
+	 * 
+	 * @param e
+	 *            the entry to load.
+	 */
+	public void loadEntry(final Entry e) {
 		current = e;
 		fileLabel.setText("Editing " + e.getFile().getName());
 		nameField.setText(e.getName());

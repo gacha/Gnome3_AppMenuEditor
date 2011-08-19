@@ -14,6 +14,8 @@ public class Main {
 
 	public static String ENTRY_DIRECTORY;
 
+	public static JFrame frame;
+
 	public static void main(final String[] args) {
 
 		if (args.length != 0) {
@@ -22,7 +24,7 @@ public class Main {
 			ENTRY_DIRECTORY = "/usr/share/applications/";
 		}
 
-		final JFrame frame = new JFrame("Gnome 3 Application Menu Editor");
+		frame = new JFrame("Gnome 3 Application Menu Editor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/icon.png"));
 		frame.setResizable(false);
