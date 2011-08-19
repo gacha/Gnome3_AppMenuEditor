@@ -20,6 +20,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -47,9 +48,15 @@ public class FileListPanel extends JPanel {
 	 */
 	private JList<Entry> entryList;
 
+	/**
+	 * The current edited entry.
+	 */
+	private Entry current;
+
 	/*
 	 * The editor components.
 	 */
+	private final JLabel fileLabel;
 	private final JTextField nameField;
 	private final JTextField commentField;
 	private final JTextField iconField;
@@ -71,6 +78,7 @@ public class FileListPanel extends JPanel {
 
 		setLayout(new BorderLayout());
 
+		fileLabel = new JLabel("Click a file to the left to edit!");
 		nameField = new JTextField(30);
 		commentField = new JTextField(30);
 		iconField = new JTextField(30);
@@ -81,6 +89,14 @@ public class FileListPanel extends JPanel {
 		startupNotifyBox = new JCheckBox("Startup Notify");
 
 		add(createEditorPanel(), BorderLayout.EAST);
+
+		Timer refreshTimer = new Timer(5000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				refreshEntries();
+			}
+		});
+		refreshTimer.start();
 
 		refreshEntries();
 	}
@@ -102,7 +118,9 @@ public class FileListPanel extends JPanel {
 			entryList.addListSelectionListener(new ListSelectionListener() {
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					loadEntry(entryList.getSelectedIndex());
+					if (entryList.getSelectedIndex() >= 0) {
+						loadEntry(entryList.getSelectedIndex());
+					}
 				}
 			});
 			add(new JScrollPane(entryList), BorderLayout.WEST);
@@ -116,13 +134,16 @@ public class FileListPanel extends JPanel {
 	 */
 
 	/**
-	 * Refresh the edit box with the data at entry.
+	 * Refresh the edit box with the data at entry. The current entry pointer is
+	 * set to the selected entry.
 	 * 
-	 * @param entry
+	 * @param entryIndex
 	 *            the entry index in the list.
 	 */
-	public void loadEntry(final int entry) {
-		Entry e = entries.get(entry);
+	public void loadEntry(final int entryIndex) {
+		Entry e = entries.get(entryIndex);
+		current = e;
+		fileLabel.setText("Editing " + e.getFile().getName());
 		nameField.setText(e.getName());
 		commentField.setText(e.getComment());
 		iconField.setText(e.getIcon());
@@ -137,25 +158,26 @@ public class FileListPanel extends JPanel {
 	 * Save the current editor content to the given entry and write to disk.
 	 * 
 	 * @param entry
-	 *            entry index.
+	 *            entry object to save.
 	 * @throws IOException
 	 */
-	public void saveEntry(final int entry) throws IOException {
-		Entry e = entries.get(entry);
-		e.setName(nameField.getText());
-		e.setComment(commentField.getText());
-		e.setIcon(iconField.getText());
-		e.setExec(execField.getText());
-		e.setType(typeField.getText());
-		e.setCategories(categoryField.getText());
-		e.setTerminal(terminalBox.isSelected());
-		e.setStartupNotify(startupNotifyBox.isSelected());
+	public void saveEntry(final Entry entry) throws IOException {
+		if (entry == null)
+			return;
+		entry.setName(nameField.getText());
+		entry.setComment(commentField.getText());
+		entry.setIcon(iconField.getText());
+		entry.setExec(execField.getText());
+		entry.setType(typeField.getText());
+		entry.setCategories(categoryField.getText());
+		entry.setTerminal(terminalBox.isSelected());
+		entry.setStartupNotify(startupNotifyBox.isSelected());
 
-		FileWriter writer = new FileWriter(e.getFile());
-		writer.write(e.toContentString());
+		FileWriter writer = new FileWriter(entry.getFile());
+		writer.write(entry.toContentString());
 		writer.close();
 
-		JOptionPane.showMessageDialog(null, e.getFile().getName()
+		JOptionPane.showMessageDialog(null, entry.getFile().getName()
 				+ " has been saved!");
 	}
 
@@ -172,7 +194,7 @@ public class FileListPanel extends JPanel {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		panel.add(new JLabel("Edit Application Entry"));
+		panel.add(fileLabel);
 
 		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
@@ -225,7 +247,7 @@ public class FileListPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					saveEntry(entryList.getSelectedIndex());
+					saveEntry(current);
 				} catch (IOException e) {
 					JOptionPane
 							.showMessageDialog(null,
