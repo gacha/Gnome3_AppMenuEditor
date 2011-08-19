@@ -107,6 +107,7 @@ public class FileListPanel extends JPanel {
 
 		JPanel listPanel = new JPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+		JPanel buttonPanel = new JPanel();
 
 		entryList = new JList<Entry>();
 		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -120,32 +121,43 @@ public class FileListPanel extends JPanel {
 		});
 		listPanel.add(new JScrollPane(entryList), BorderLayout.WEST);
 
-		JButton addNewEntryButton = new JButton("Add Entry");
+		JButton addNewEntryButton = new JButton("+");
+		addNewEntryButton.setToolTipText("Create Blank Entry");
 		addNewEntryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					createEntry();
+					refreshEntries();
 				} catch (IOException e) {
 					ioWarning();
 				}
 			}
 		});
-		listPanel.add(addNewEntryButton);
+		buttonPanel.add(addNewEntryButton);
 
-		JButton removeEntryButton = new JButton("Delete Selected");
+		JButton removeEntryButton = new JButton("-");
+		removeEntryButton.setToolTipText("Delete Selected Entry");
 		removeEntryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int selection = entryList.getSelectedIndex();
 				if (selection < 0)
 					return;
-				deleteEntry(entries.get(selection));
+				Entry e = entries.get(selection);
+				if (e.getFile().canWrite()) {
+					deleteEntry(e);
+					refreshEntries();
+				} else {
+					ioWarning();
+				}
 			}
 		});
-		listPanel.add(removeEntryButton);
+		buttonPanel.add(removeEntryButton);
 
-		add(new JScrollPane(listPanel), BorderLayout.WEST);
+		listPanel.add(buttonPanel);
+
+		add(listPanel, BorderLayout.WEST);
 
 		refreshEntries();
 
@@ -181,8 +193,8 @@ public class FileListPanel extends JPanel {
 	public void deleteEntry(final Entry entry) {
 		File f = entry.getFile();
 		int result = JOptionPane.showConfirmDialog(null,
-				JOptionPane.YES_NO_OPTION, "Delete the file " + f.getName()
-						+ "?", 0);
+				"Delete the file " + f.getName() + "?", "Confirm Deletion!",
+				JOptionPane.OK_CANCEL_OPTION);
 		if (result == JOptionPane.YES_OPTION) {
 			f.delete();
 		}
@@ -334,6 +346,7 @@ public class FileListPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					saveEntry(current);
+					refreshEntries();
 				} catch (IOException e) {
 					ioWarning();
 				}
