@@ -10,7 +10,7 @@ import javax.swing.JFrame;
  * @author toriscope
  * 
  */
-public class Main {
+public class Gnome3MenuEditor {
 
 	public static String ENTRY_DIRECTORY;
 
