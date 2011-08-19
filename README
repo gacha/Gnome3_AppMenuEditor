@@ -6,4 +6,5 @@ Going to clean up the interface, and perhaps construct an Arch AUR package so I 
 -toriscope
 
 Fun Tips:
-If you want to use another '.desktop' directory besides the standard '/usr/share/applications/', you can just pass in the absolute path to the new directory as a command-line parameter.
+Pass in -h as a command line parameter to get help and additional instructions! 
+-d allows you to specify a different entry directory.
