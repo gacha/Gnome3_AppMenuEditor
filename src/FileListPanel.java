@@ -107,7 +107,8 @@ public class FileListPanel extends JPanel {
 
 		JPanel listPanel = new JPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-		JPanel buttonPanel = new JPanel();
+
+		listPanel.add(new JLabel(DIRECTORY.getAbsolutePath()));
 
 		entryList = new JList<Entry>();
 		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -120,6 +121,8 @@ public class FileListPanel extends JPanel {
 			}
 		});
 		listPanel.add(new JScrollPane(entryList), BorderLayout.WEST);
+
+		JPanel buttonPanel = new JPanel();
 
 		JButton addNewEntryButton = new JButton("+");
 		addNewEntryButton.setToolTipText("Create Blank Entry");
@@ -340,7 +343,7 @@ public class FileListPanel extends JPanel {
 
 		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
 
-		JButton saveButton = new JButton("Save");
+		JButton saveButton = new JButton("Save Edits");
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -352,9 +355,13 @@ public class FileListPanel extends JPanel {
 				}
 			}
 		});
-		panel.add(saveButton);
 
-		return panel;
+		JPanel outerPanel = new JPanel();
+		outerPanel.setLayout(new BoxLayout(outerPanel, BoxLayout.Y_AXIS));
+		outerPanel.add(new JScrollPane(panel));
+		outerPanel.add(saveButton);
+
+		return outerPanel;
 	}
 
 	/**
