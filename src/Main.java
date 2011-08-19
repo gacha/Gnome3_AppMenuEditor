@@ -55,6 +55,10 @@ public class Main {
 		}
 
 		if (args[0].contains("-d")) {
+			if(args.length==1){
+				System.out.println("Please supply a directory along with -d");
+				System.exit(0);
+			}
 			ENTRY_DIRECTORY = args[1];
 		}
 	}
