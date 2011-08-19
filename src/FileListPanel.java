@@ -53,6 +53,11 @@ public class FileListPanel extends JPanel {
 	 */
 	private Entry current;
 
+	/**
+	 * Last time directory was edited.
+	 */
+	private long lastEdit;
+
 	/*
 	 * The editor components.
 	 */
@@ -67,7 +72,8 @@ public class FileListPanel extends JPanel {
 	private final JCheckBox startupNotifyBox;
 
 	/**
-	 * Create a panel that uses the given directory.
+	 * Create a panel that uses the given directory. This is where the button
+	 * actions are assigned and the initial refresh is performed.
 	 * 
 	 * @param DIRECTORY
 	 *            the directory containing the .desktop entries.
@@ -76,7 +82,13 @@ public class FileListPanel extends JPanel {
 
 		this.DIRECTORY = DIRECTORY;
 
+		lastEdit = DIRECTORY.lastModified();
+
 		setLayout(new BorderLayout());
+
+		/*
+		 * Instantiate the editor components.
+		 */
 
 		fileLabel = new JLabel("Click a file to the left to edit!");
 		nameField = new JTextField(30);
@@ -87,8 +99,11 @@ public class FileListPanel extends JPanel {
 		categoryField = new JTextField(30);
 		terminalBox = new JCheckBox("Run in Terminal");
 		startupNotifyBox = new JCheckBox("Startup Notify");
+		add(new JScrollPane(createEditorPanel()), BorderLayout.EAST);
 
-		add(createEditorPanel(), BorderLayout.EAST);
+		/*
+		 * The list and add/remove button.
+		 */
 
 		JPanel listPanel = new JPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
@@ -112,16 +127,25 @@ public class FileListPanel extends JPanel {
 				try {
 					createEntry();
 				} catch (IOException e) {
-					JOptionPane
-							.showMessageDialog(null,
-									"There has been an IO error! Try running this editor as root");
+					ioWarning();
 				}
 			}
 		});
-
 		listPanel.add(addNewEntryButton);
 
-		add(listPanel, BorderLayout.WEST);
+		JButton removeEntryButton = new JButton("Delete Selected");
+		removeEntryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int selection = entryList.getSelectedIndex();
+				if (selection < 0)
+					return;
+				deleteEntry(entries.get(selection));
+			}
+		});
+		listPanel.add(removeEntryButton);
+
+		add(new JScrollPane(listPanel), BorderLayout.WEST);
 
 		refreshEntries();
 
@@ -149,18 +173,36 @@ public class FileListPanel extends JPanel {
 	}
 
 	/**
+	 * Delete the file component of the given entry.
+	 * 
+	 * @param entry
+	 *            the entry to remove from disk.
+	 */
+	public void deleteEntry(final Entry entry) {
+		File f = entry.getFile();
+		int result = JOptionPane.showConfirmDialog(null,
+				JOptionPane.YES_NO_OPTION, "Delete the file " + f.getName()
+						+ "?", 0);
+		if (result == JOptionPane.YES_OPTION) {
+			f.delete();
+		}
+	}
+
+	/**
 	 * Refresh the JList with he latest entries in the directory.
 	 */
 	public void refreshEntries() {
+		List<Entry> oldList = entries;
 		entries = new ArrayList<Entry>();
 		for (File file : DIRECTORY.listFiles()) {
-			if (file.getName().contains(".desktop"))
+			if (file.getName().endsWith(".desktop"))
 				entries.add(new Entry(file));
 		}
 
-		Entry[] newEntries = entries.toArray(new Entry[] {});
-		entryList.setListData(newEntries);
-		Main.frame.pack();
+		if (oldList == null || DIRECTORY.lastModified() > lastEdit) {
+			entryList.setListData(entries.toArray(new Entry[] {}));
+			lastEdit = DIRECTORY.lastModified();
+		}
 	}
 
 	/*
@@ -293,9 +335,7 @@ public class FileListPanel extends JPanel {
 				try {
 					saveEntry(current);
 				} catch (IOException e) {
-					JOptionPane
-							.showMessageDialog(null,
-									"There has been an IO error! Try running this editor as root");
+					ioWarning();
 				}
 			}
 		});
@@ -323,5 +363,13 @@ public class FileListPanel extends JPanel {
 				}
 			}
 		};
+	}
+
+	/**
+	 * Display an adorable little reminder to run the application as root.
+	 */
+	private void ioWarning() {
+		JOptionPane.showMessageDialog(null,
+				"There has been an IO error! Try running this editor as root");
 	}
 }
