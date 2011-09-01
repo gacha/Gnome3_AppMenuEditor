@@ -179,7 +179,7 @@ public class FileListPanel extends JPanel {
 	 */
 	public void createEntry() throws IOException {
 		String s = JOptionPane
-				.showInputDialog("Name of new entry? (omit the extension)");
+				.showInputDialog("Name of new entry? (omit the extension)\nIt should then appear in the list.");
 		if (s != null && !s.isEmpty()) {
 			File f = new File(DIRECTORY + "/" + s + ".desktop");
 			new FileWriter(f).close();
