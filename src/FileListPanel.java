@@ -26,6 +26,7 @@ import javax.swing.event.ListSelectionListener;
 
 /**
  * Panel that lists the entry files and lets you edit them.
+ * TODO: Split up view and logic.
  * 
  * @author toriscope
  * 
