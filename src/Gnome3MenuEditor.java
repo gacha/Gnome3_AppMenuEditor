@@ -12,7 +12,7 @@ import javax.swing.JFrame;
  */
 public class Gnome3MenuEditor {
 
-	public static String ENTRY_DIRECTORY;
+	public static String entryDirectorySuffix = "/.local/share/applications/";
 
 	public static JFrame frame;
 
@@ -25,7 +25,7 @@ public class Gnome3MenuEditor {
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"images/icon.png"));
 		frame.setResizable(false);
-		frame.add(new FileListPanel(new File(ENTRY_DIRECTORY)));
+		frame.add(new FileListPanel(new File(entryDirectorySuffix)));
 		frame.pack();
 		frame.setVisible(true);
 	}
@@ -38,7 +38,8 @@ public class Gnome3MenuEditor {
 	 */
 	public static void checkForTerminalCommands(final String... args) {
 		if (args.length == 0) {
-			ENTRY_DIRECTORY = "/usr/share/applications/";
+			entryDirectorySuffix = "/home/" + System.getProperty("user.name")
+					+ entryDirectorySuffix;
 			return;
 		}
 
@@ -55,11 +56,11 @@ public class Gnome3MenuEditor {
 		}
 
 		if (args[0].contains("-d")) {
-			if(args.length==1){
+			if (args.length == 1) {
 				System.out.println("Please supply a directory along with -d");
 				System.exit(0);
 			}
-			ENTRY_DIRECTORY = args[1];
+			entryDirectorySuffix = args[1];
 		}
 	}
 }
