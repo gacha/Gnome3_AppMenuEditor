@@ -13,4 +13,4 @@ Report all bugs on this github page under "issues". Enjoy!
 
 -toriscope
 
-<img href="http://www.prism.gatech.edu/~efruchter3/gme1.png"></img>
+![Screenshot 1](http://www.prism.gatech.edu/~efruchter3/gme1.png)
