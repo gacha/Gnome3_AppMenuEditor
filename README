@@ -8,9 +8,7 @@ Fun Tips:
 Pass in -h as a command line parameter to get help and additional instructions! 
 -d allows you to specify a different entry directory.
 
-In Gnome3, to edit the local menu entries without root,
-you can do something like:
+The username will automatically be used to generate a path to /home/USERNAME, etc, so if your system is different for some reason, be sure to pass in the proper directory!
+Report all bugs on this github page under "issues". Enjoy!
 
-java -jar Gnome3_AppMenuEditor.jar -d /home/USERNAME/.local/share/applications/
-
-Otherwise, be sure to sudo the app, as it will attempt to access the applications directory in /usr/share/.
+-toriscope

@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 
 /**
  * This Program will display and allow the editing of .desktop entries. In Gnome
- * 3.
+ * 3. Poorly put together, I know! :)
  * 
  * @author toriscope
  * 
