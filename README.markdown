@@ -15,4 +15,4 @@ Report all bugs on this github page under "issues". Enjoy!
 
 Example Screenshot:
 
-![Screenshot 1](http://www.prism.gatech.edu/~efruchter3/gme1.png)
+![Screenshot 1 size reduced](http://www.prism.gatech.edu/~efruchter3/gme1.png)
