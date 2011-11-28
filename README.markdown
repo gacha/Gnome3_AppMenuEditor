@@ -1,5 +1,7 @@
 A GUI for manipulating the Application menu of gnome 3, because it is not as easy as it should be.
 
+I compiled the jar in Java 7, so you'll need to have your java runtime up-to-date to run the pre-built package under Downloads.
+
 Current State:
 Main features are complete. You can add/remove/edit desktop entries! Does not support multi-language entry editing, as that is a very complex side of desktop entries that I really don't need.
 Going to clean up the interface, and perhaps construct an Arch AUR package so I can just install it easily next time.
