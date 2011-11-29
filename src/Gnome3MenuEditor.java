@@ -20,12 +20,20 @@ public class Gnome3MenuEditor {
 
 		checkForTerminalCommands(args);
 
+		File entryDir = new File(entryDirectorySuffix);
+		if (!entryDir.isDirectory()) {
+			System.err
+					.println(entryDirectorySuffix
+							+ " is not a valid directory! Please specify a proper one with -d");
+			System.exit(2);
+		}
+
 		frame = new JFrame("Gnome 3 Application Menu Editor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"images/icon.png"));
 		frame.setResizable(false);
-		frame.add(new FileListPanel(new File(entryDirectorySuffix)));
+		frame.add(new FileListPanel(entryDir));
 		frame.pack();
 		frame.setVisible(true);
 	}
