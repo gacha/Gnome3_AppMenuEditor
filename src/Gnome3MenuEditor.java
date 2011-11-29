@@ -25,7 +25,7 @@ public class Gnome3MenuEditor {
 			System.err
 					.println(entryDirectorySuffix
 							+ " is not a valid directory! Please specify a proper one with -d");
-			System.exit(2);
+			System.exit(0);
 		}
 
 		frame = new JFrame("Gnome 3 Application Menu Editor");
