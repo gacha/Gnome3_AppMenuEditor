@@ -38,8 +38,19 @@ public class Gnome3MenuEditor {
 	 */
 	public static void checkForTerminalCommands(final String... args) {
 		if (args.length == 0) {
-			entryDirectorySuffix = "/home/" + System.getProperty("user.name")
-					+ entryDirectorySuffix;
+			try {
+				String username = System.getProperty("user.name");
+				entryDirectorySuffix = "/home/" + username
+						+ entryDirectorySuffix;
+			} catch (final SecurityException e) {
+				System.err
+						.println("Unable to access user.name value! Please supply a directory with -d");
+				System.exit(0);
+			} catch (final NullPointerException e) {
+				System.err
+						.println("No value for the system property user.name! Please supply a directory with -d");
+				System.exit(0);
+			}
 			return;
 		}
 
