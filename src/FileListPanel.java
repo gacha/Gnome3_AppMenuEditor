@@ -47,7 +47,7 @@ public class FileListPanel extends JPanel {
 	/**
 	 * The JList of all the current entries.
 	 */
-	private JList<Entry> entryList;
+	private JList entryList;
 
 	/**
 	 * The current edited entry.
@@ -111,7 +111,7 @@ public class FileListPanel extends JPanel {
 
 		listPanel.add(new JLabel(DIRECTORY.getAbsolutePath()));
 
-		entryList = new JList<Entry>();
+		entryList = new JList();
 		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		entryList.addListSelectionListener(new ListSelectionListener() {
 			@Override
