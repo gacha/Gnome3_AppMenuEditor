@@ -76,6 +76,8 @@ public class ApplicationPanel extends JPanel {
 	private final JTextField categoryField;
 	private final JCheckBox terminalBox;
 	private final JCheckBox startupNotifyBox;
+	
+	private boolean forceRefresh = false;
 
 	/**
 	 * Create a panel that uses the given directory. This is where the button
@@ -226,7 +228,8 @@ public class ApplicationPanel extends JPanel {
 			ioWarning();
 		}
 		Collections.sort(entries);
-		if (oldList == null || DIRECTORY.lastModified() > lastEdit) {
+		if (forceRefresh || oldList == null || DIRECTORY.lastModified() > lastEdit) {
+			forceRefresh = false;
 			entryList.setListData(entries.toArray(new Entry[] {}));
 			lastEdit = DIRECTORY.lastModified();
 		}
@@ -292,6 +295,7 @@ public class ApplicationPanel extends JPanel {
 
 		JOptionPane.showMessageDialog(null, entry.getFile().getName()
 				+ " has been saved!");
+		forceRefresh = true;
 	}
 
 	/*
