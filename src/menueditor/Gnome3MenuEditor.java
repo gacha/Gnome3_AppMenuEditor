@@ -1,3 +1,4 @@
+package menueditor;
 import java.awt.Toolkit;
 import java.io.File;
 
@@ -66,7 +67,7 @@ public class Gnome3MenuEditor {
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"images/icon.png"));
 		frame.setResizable(false);
-		frame.add(new FileListPanel(entryDir));
+		frame.add(new ApplicationPanel(entryDir));
 		frame.pack();
 		frame.setVisible(true);
 	}
