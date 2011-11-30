@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -224,7 +225,7 @@ public class ApplicationPanel extends JPanel {
 		} catch (IOException ex) {
 			ioWarning();
 		}
-
+		Collections.sort(entries);
 		if (oldList == null || DIRECTORY.lastModified() > lastEdit) {
 			entryList.setListData(entries.toArray(new Entry[] {}));
 			lastEdit = DIRECTORY.lastModified();
