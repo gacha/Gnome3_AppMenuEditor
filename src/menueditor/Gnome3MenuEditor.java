@@ -82,9 +82,10 @@ public class Gnome3MenuEditor {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
 				"images/icon.png"));
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.add(new ApplicationPanel(entryDir));
 		frame.pack();
 		frame.setVisible(true);
+		frame.setMinimumSize(frame.getPreferredSize());
 	}
 }

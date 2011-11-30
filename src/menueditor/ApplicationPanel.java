@@ -1,6 +1,8 @@
 package menueditor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -14,16 +16,15 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -64,6 +65,8 @@ public class ApplicationPanel extends JPanel {
 	 */
 	private long lastEdit;
 
+	private JButton saveButton;
+	
 	/*
 	 * The editor components.
 	 */
@@ -106,76 +109,15 @@ public class ApplicationPanel extends JPanel {
 		categoryField = new JTextField(30);
 		terminalBox = new JCheckBox("Run in Terminal");
 		startupNotifyBox = new JCheckBox("Startup Notify");
-		add(new JScrollPane(createEditorPanel()), BorderLayout.EAST);
+		add(createListPanel(), BorderLayout.LINE_START);
+		add(createEditorPanel(), BorderLayout.CENTER);
 
-		/*
-		 * The list and add/remove button.
-		 */
-
-		JPanel listPanel = new JPanel();
-		listPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-
-		listPanel.add(new JLabel(DIRECTORY.getAbsolutePath()));
-
-		entryList = new JList();
-		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		entryList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (entryList.getSelectedIndex() >= 0) {
-					loadEntry(entryList.getSelectedIndex());
-				}
-			}
-		});
-		listPanel.add(new JScrollPane(entryList), BorderLayout.WEST);
-
-		JPanel buttonPanel = new JPanel();
-
-		JButton addNewEntryButton = new JButton("+");
-		addNewEntryButton.setToolTipText("Create Blank Entry");
-		addNewEntryButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					createEntry();
-					refreshEntries();
-				} catch (IOException e) {
-					ioWarning();
-				}
-			}
-		});
-		buttonPanel.add(addNewEntryButton);
-
-		JButton removeEntryButton = new JButton("-");
-		removeEntryButton.setToolTipText("Delete Selected Entry");
-		removeEntryButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int selection = entryList.getSelectedIndex();
-				if (selection < 0)
-					return;
-				Entry e = entries.get(selection);
-				if (e.getFile().canWrite()) {
-					deleteEntry(e);
-					refreshEntries();
-				} else {
-					ioWarning();
-				}
-			}
-		});
-		buttonPanel.add(removeEntryButton);
-
-		listPanel.add(buttonPanel);
-
-		add(listPanel, BorderLayout.WEST);
-
-		refreshEntries();
+		refreshEntries(true);
 
 		new Timer(5000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				refreshEntries();
+				refreshEntries(false);
 			}
 		}).start();
 	}
@@ -185,14 +127,16 @@ public class ApplicationPanel extends JPanel {
 	 * 
 	 * @throws IOException
 	 */
-	public void createEntry() throws IOException {
+	public Entry createEntry() throws IOException {
 		String s = JOptionPane
-				.showInputDialog("Name of new entry? (omit the extension)\nIt should then appear in the list.");
+				.showInputDialog("Filename of new entry? (omit the extension)\nIt should then appear in the list.");
 		if (s != null && !s.isEmpty()) {
 			File f = new File(DIRECTORY + "/" + s + ".desktop");
 			new FileWriter(f).close();
-			loadEntry(new Entry(f));
+			//loadEntry(new Entry(f));
+			return new Entry(f);
 		}
+		return null;
 	}
 
 	/**
@@ -214,20 +158,20 @@ public class ApplicationPanel extends JPanel {
 	/**
 	 * Refresh the JList with he latest entries in the directory.
 	 */
-	public void refreshEntries() {
-		List<Entry> oldList = entries;
-		entries = new ArrayList<Entry>();
-		try {
-			for (File file : DIRECTORY.listFiles()) {
-				if (file.getName().endsWith(".desktop"))
-					entries.add(new Entry(file));
+	public void refreshEntries(boolean force) {
+		if (DIRECTORY.lastModified() > lastEdit || force) {
+			entries = new ArrayList<Entry>();
+			try {
+				for (File file : DIRECTORY.listFiles()) {
+					if (file.getName().endsWith(".desktop"))
+						entries.add(new Entry(file));
+				}
+			} catch (IOException ex) {
+				ioWarning();
 			}
-		} catch (IOException ex) {
-			ioWarning();
-		}
-		Collections.sort(entries);
-		if (oldList == null || DIRECTORY.lastModified() > lastEdit) {
+			Collections.sort(entries);
 			entryList.setListData(entries.toArray(new Entry[] {}));
+			//entryList.repaint();
 			lastEdit = DIRECTORY.lastModified();
 		}
 	}
@@ -256,7 +200,7 @@ public class ApplicationPanel extends JPanel {
 	 */
 	public void loadEntry(final Entry e) {
 		current = e;
-		fileLabel.setText("Editing " + e.getFile().getName());
+		fileLabel.setText("Editing '" + e.getFile().getName() + "'");
 		nameField.setText(e.getName());
 		commentField.setText(e.getComment());
 		iconField.setText(e.getIcon());
@@ -289,7 +233,8 @@ public class ApplicationPanel extends JPanel {
 		FileWriter writer = new FileWriter(entry.getFile());
 		writer.write(entry.toContentString());
 		writer.close();
-
+		refreshEntries(true);
+		entryList.setSelectedValue(entry, true);
 		JOptionPane.showMessageDialog(null, entry.getFile().getName()
 				+ " has been saved!");
 	}
@@ -298,85 +243,149 @@ public class ApplicationPanel extends JPanel {
 	 * Support Functions.
 	 */
 
+
+	private JPanel createListPanel() {
+		JPanel titlePanel = new JPanel();
+		titlePanel.add(new JLabel(DIRECTORY.getAbsolutePath()));
+		entryList = new JList();
+		entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		entryList.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (entryList.getSelectedIndex() >= 0) {
+					loadEntry(entryList.getSelectedIndex());
+					saveButton.setEnabled(true);
+				} else {
+					saveButton.setEnabled(false);
+				}
+			}
+		});
+
+		JPanel buttonPanel = new JPanel();
+
+		JButton addNewEntryButton = new JButton("+");
+		addNewEntryButton.setToolTipText("Create Blank Entry");
+		addNewEntryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Entry e = createEntry();
+					refreshEntries(true);
+					entryList.setSelectedValue(e, true);
+				} catch (IOException e) {
+					ioWarning();
+				}
+			}
+		});
+		buttonPanel.add(addNewEntryButton);
+
+		JButton removeEntryButton = new JButton("-");
+		removeEntryButton.setToolTipText("Delete Selected Entry");
+		removeEntryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int selection = entryList.getSelectedIndex();
+				if (selection < 0)
+					return;
+				Entry e = entries.get(selection);
+				if (e.getFile().canWrite()) {
+					deleteEntry(e);
+					refreshEntries(true);
+				} else {
+					ioWarning();
+				}
+			}
+		});
+		buttonPanel.add(removeEntryButton);
+
+		JPanel listPanel = new JPanel();
+		listPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		listPanel.setLayout(new BorderLayout());
+		listPanel.add(titlePanel, BorderLayout.PAGE_START);
+		listPanel.add(new JScrollPane(entryList), BorderLayout.CENTER);
+		listPanel.add(buttonPanel, BorderLayout.PAGE_END);
+		
+		return listPanel;
+	}
+	
 	/**
 	 * This builds the editor panel, assigns proper labels.
 	 * 
 	 * @return the formed editor panel.
 	 */
 	private JPanel createEditorPanel() {
-		JPanel panel = new JPanel();
-		panel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		JPanel titlePanel = new JPanel();
+		titlePanel.add(fileLabel);
+		
+		JPanel contentPanel = new JPanel();
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
-		panel.add(fileLabel);
+		contentPanel.add(new JLabel("Name:"));
+		contentPanel.add(nameField);
 
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+		contentPanel.add(new JLabel("Comments:"));
+		contentPanel.add(commentField);
 
-		panel.add(new JLabel("Name:"));
-		panel.add(nameField);
+		contentPanel.add(new JLabel("Icon Path:"));
+		JPanel iconcontentPanel = new JPanel(new BorderLayout());
+		iconcontentPanel.add(iconField, BorderLayout.CENTER);
+		JButton iconButton = new JButton("Find Icon");
+		iconButton.addActionListener(fileChooseActionListener(iconField));
+		iconcontentPanel.add(iconButton, BorderLayout.LINE_END);
+		contentPanel.add(iconcontentPanel);
 
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-		panel.add(new JLabel("Comments:"));
-		panel.add(commentField);
-
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-		panel.add(new JLabel("Icon Path:"));
-		panel.add(iconField);
-		JButton fileButton = new JButton("Find Icon");
-		fileButton.addActionListener(fileChooseActionListener(iconField));
-		panel.add(fileButton);
-
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-		panel.add(new JLabel("Executable Path:"));
-		panel.add(execField);
-		fileButton = new JButton("Find Exec");
+		contentPanel.add(new JLabel("Executable Path:"));
+		JButton fileButton = new JButton("Find Exec");
 		fileButton.addActionListener(fileChooseActionListener(execField));
-		panel.add(fileButton);
+		JPanel filePanel = new JPanel(new BorderLayout());
+		filePanel.add(execField, BorderLayout.CENTER);
+		filePanel.add(fileButton, BorderLayout.LINE_END);
+		contentPanel.add(filePanel);
 
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+		contentPanel.add(new JLabel("Type:"));
+		contentPanel.add(typeField);
 
-		panel.add(new JLabel("Type:"));
-		panel.add(typeField);
+		contentPanel.add(new JLabel("Categories (';' seperated):"));
+		contentPanel.add(categoryField);
 
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
+		contentPanel.add(terminalBox);
 
-		panel.add(new JLabel("Categories (';' seperated):"));
-		panel.add(categoryField);
+		contentPanel.add(startupNotifyBox);
 
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-		panel.add(terminalBox);
-
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-		panel.add(startupNotifyBox);
-
-		panel.add(new JSeparator(SwingConstants.HORIZONTAL));
-
-		JButton saveButton = new JButton("Save Edits");
+		
+		for (Component c : contentPanel.getComponents()) {
+			if (c instanceof JComponent) {
+				((JComponent)c).setAlignmentX(LEFT_ALIGNMENT);
+			}
+		}
+		
+		JPanel buttonPanel = new JPanel();
+		saveButton = new JButton("Save Edits");
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					saveEntry(current);
-					refreshEntries();
 				} catch (IOException e) {
 					ioWarning();
 				}
 			}
 		});
+		saveButton.setEnabled(false);
+		buttonPanel.add(saveButton);
 
-		JPanel outerPanel = new JPanel();
-		outerPanel.setLayout(new BoxLayout(outerPanel, BoxLayout.Y_AXIS));
-		outerPanel.add(new JScrollPane(panel));
-		outerPanel.add(saveButton);
-		
-		outerPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-
-		return outerPanel;
+		JPanel noResizePanel = new JPanel();
+		noResizePanel.setLayout(new BorderLayout());
+		noResizePanel.add(titlePanel, BorderLayout.PAGE_START);
+		noResizePanel.add(contentPanel, BorderLayout.CENTER);
+		JPanel editorPanel = new JPanel();
+		editorPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+		editorPanel.setLayout(new BorderLayout());
+//		editorPanel.add(titlePanel, BorderLayout.PAGE_START);
+		editorPanel.add(noResizePanel, BorderLayout.PAGE_START);
+//		editorPanel.add(contentPanel, BorderLayout.CENTER);
+		editorPanel.add(buttonPanel, BorderLayout.PAGE_END);
+		return editorPanel;
 	}
 
 	/**
