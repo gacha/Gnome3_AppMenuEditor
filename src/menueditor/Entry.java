@@ -9,7 +9,7 @@ import java.util.Scanner;
  * @author toriscope
  * 
  */
-public class Entry {
+public class Entry implements Comparable<Entry> {
 
 	/**
 	 * The file this entry is linked to.
@@ -106,7 +106,7 @@ public class Entry {
 
 	@Override
 	public String toString() {
-		return file.getName();
+		return Name.length() > 0 ? Name + "  (" + file.getName() + ")": file.getName();
 	}
 
 	/**
@@ -200,5 +200,10 @@ public class Entry {
 
 	public File getFile() {
 		return file;
+	}
+
+	@Override
+	public int compareTo(Entry o) {
+		return Name.compareTo(o.getName());
 	}
 }
