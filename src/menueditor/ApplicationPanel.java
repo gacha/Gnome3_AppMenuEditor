@@ -1,7 +1,6 @@
 package menueditor;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
@@ -66,7 +66,7 @@ public class ApplicationPanel extends JPanel {
 	private long lastEdit;
 
 	private JButton saveButton;
-	
+
 	/*
 	 * The editor components.
 	 */
@@ -133,7 +133,6 @@ public class ApplicationPanel extends JPanel {
 		if (s != null && !s.isEmpty()) {
 			File f = new File(DIRECTORY + "/" + s + ".desktop");
 			new FileWriter(f).close();
-			//loadEntry(new Entry(f));
 			return new Entry(f);
 		}
 		return null;
@@ -171,7 +170,6 @@ public class ApplicationPanel extends JPanel {
 			}
 			Collections.sort(entries);
 			entryList.setListData(entries.toArray(new Entry[] {}));
-			//entryList.repaint();
 			lastEdit = DIRECTORY.lastModified();
 		}
 	}
@@ -243,7 +241,6 @@ public class ApplicationPanel extends JPanel {
 	 * Support Functions.
 	 */
 
-
 	private JPanel createListPanel() {
 		JPanel titlePanel = new JPanel();
 		titlePanel.add(new JLabel(DIRECTORY.getAbsolutePath()));
@@ -261,7 +258,8 @@ public class ApplicationPanel extends JPanel {
 			}
 		});
 
-		JPanel buttonPanel = new JPanel();
+		JToolBar buttonPanel = new JToolBar(JToolBar.HORIZONTAL);
+		buttonPanel.setFloatable(false);
 
 		JButton addNewEntryButton = new JButton("+");
 		addNewEntryButton.setToolTipText("Create Blank Entry");
@@ -278,7 +276,6 @@ public class ApplicationPanel extends JPanel {
 			}
 		});
 		buttonPanel.add(addNewEntryButton);
-
 		JButton removeEntryButton = new JButton("-");
 		removeEntryButton.setToolTipText("Delete Selected Entry");
 		removeEntryButton.addActionListener(new ActionListener() {
@@ -304,10 +301,10 @@ public class ApplicationPanel extends JPanel {
 		listPanel.add(titlePanel, BorderLayout.PAGE_START);
 		listPanel.add(new JScrollPane(entryList), BorderLayout.CENTER);
 		listPanel.add(buttonPanel, BorderLayout.PAGE_END);
-		
+
 		return listPanel;
 	}
-	
+
 	/**
 	 * This builds the editor panel, assigns proper labels.
 	 * 
@@ -316,7 +313,7 @@ public class ApplicationPanel extends JPanel {
 	private JPanel createEditorPanel() {
 		JPanel titlePanel = new JPanel();
 		titlePanel.add(fileLabel);
-		
+
 		JPanel contentPanel = new JPanel();
 		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 
@@ -329,13 +326,13 @@ public class ApplicationPanel extends JPanel {
 		contentPanel.add(new JLabel("Icon Path:"));
 		JPanel iconcontentPanel = new JPanel(new BorderLayout());
 		iconcontentPanel.add(iconField, BorderLayout.CENTER);
-		JButton iconButton = new JButton("Find Icon");
+		JButton iconButton = new JButton("...");
 		iconButton.addActionListener(fileChooseActionListener(iconField));
 		iconcontentPanel.add(iconButton, BorderLayout.LINE_END);
 		contentPanel.add(iconcontentPanel);
 
 		contentPanel.add(new JLabel("Executable Path:"));
-		JButton fileButton = new JButton("Find Exec");
+		JButton fileButton = new JButton("...");
 		fileButton.addActionListener(fileChooseActionListener(execField));
 		JPanel filePanel = new JPanel(new BorderLayout());
 		filePanel.add(execField, BorderLayout.CENTER);
@@ -352,13 +349,12 @@ public class ApplicationPanel extends JPanel {
 
 		contentPanel.add(startupNotifyBox);
 
-		
 		for (Component c : contentPanel.getComponents()) {
 			if (c instanceof JComponent) {
-				((JComponent)c).setAlignmentX(LEFT_ALIGNMENT);
+				((JComponent) c).setAlignmentX(LEFT_ALIGNMENT);
 			}
 		}
-		
+
 		JPanel buttonPanel = new JPanel();
 		saveButton = new JButton("Save Edits");
 		saveButton.addActionListener(new ActionListener() {
@@ -381,9 +377,7 @@ public class ApplicationPanel extends JPanel {
 		JPanel editorPanel = new JPanel();
 		editorPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 		editorPanel.setLayout(new BorderLayout());
-//		editorPanel.add(titlePanel, BorderLayout.PAGE_START);
 		editorPanel.add(noResizePanel, BorderLayout.PAGE_START);
-//		editorPanel.add(contentPanel, BorderLayout.CENTER);
 		editorPanel.add(buttonPanel, BorderLayout.PAGE_END);
 		return editorPanel;
 	}
