@@ -12,3 +12,5 @@ The username will automatically be used to generate a path to /home/USERNAME, et
 Report all bugs on this github page under "issues". Enjoy!
 
 -toriscope
+
+![Screenshot 1 size reduced](http://www.prism.gatech.edu/~efruchter3/gme1.png)
