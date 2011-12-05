@@ -65,20 +65,13 @@ public class ApplicationPanel extends JPanel {
 	 */
 	private long lastEdit;
 
-	private JButton saveButton;
-
 	/*
 	 * The editor components.
 	 */
+	private JButton saveButton;
 	private final JLabel fileLabel;
-	private final JTextField nameField;
-	private final JTextField commentField;
-	private final JTextField iconField;
-	private final JTextField execField;
-	private final JTextField typeField;
-	private final JTextField categoryField;
-	private final JCheckBox terminalBox;
-	private final JCheckBox startupNotifyBox;
+	private final JTextField nameField, commentField, iconField, execField,typeField, categoryField;
+	private final JCheckBox terminalBox, startupNotifyBox;
 
 	/**
 	 * Create a panel that uses the given directory. This is where the button
@@ -407,7 +400,6 @@ public class ApplicationPanel extends JPanel {
 	 * Display an adorable little reminder to run the application as root.
 	 */
 	private void ioWarning() {
-		JOptionPane.showMessageDialog(null,
-				"There has been an I/O error! Try running this editor as root");
+		JOptionPane.showMessageDialog(null, "There has been an I/O error! Try running this editor as root");
 	}
 }

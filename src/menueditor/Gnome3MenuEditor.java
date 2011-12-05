@@ -6,8 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
- * This Program will display and allow the editing of .desktop entries. In Gnome
- * 3. Poorly put together, I know! :)
+ * This Program will display and allow the editing of .desktop entries in Gnome 3.
  * 
  * @author toriscope
  * 
@@ -30,19 +29,16 @@ public class Gnome3MenuEditor {
 			try {
 				username = System.getProperty("user.name");
 			} catch (final SecurityException e) {
-				System.err
-						.println("Unable to access user.name value! Please supply a directory with -d");
+				System.err.println("Unable to access user.name value! Please supply a directory with -d");
 				System.exit(0);
 			}
 			if (username == null) {
-				System.err
-						.println("No value for the system property user.name! Please supply a directory with -d");
+				System.err.println("No value for the system property user.name! Please supply a directory with -d");
 				System.exit(0);
 			}
 			dir = "/home/" + username + ENTRY_DIR_FROM_HOME;
 		} else if (args[0].contains("-h") || args[0].contains("-help")) {
-			System.out
-					.println("This editor allows you to edit the entries in /usr/share/applications/, "
+			System.out.println("This editor allows you to edit the entries in /usr/share/applications/, "
 							+ "which controls the Gnome 3 Applications Menu. "
 							+ "To specify a different directory to parse for entries, "
 							+ "pass it in through command line with '-d'. ex: 'sudo java -jar gnome3-menu-editor -d /home/username/Desktop'.");
@@ -57,9 +53,7 @@ public class Gnome3MenuEditor {
 
 		File entryDir = new File(dir);
 		if (!entryDir.isDirectory()) {
-			System.err
-					.println(dir
-							+ " is not a valid directory! Please specify a proper one with -d");
+			System.err.println(dir + " is not a valid directory! Please specify a proper one with -d");
 			System.exit(0);
 		}
 
@@ -71,8 +65,7 @@ public class Gnome3MenuEditor {
 
 		JFrame frame = new JFrame("Gnome 3 Application Menu Editor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				"images/icon.png"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("images/icon.png"));
 		frame.setResizable(true);
 		frame.add(new ApplicationPanel(entryDir));
 		frame.pack();
