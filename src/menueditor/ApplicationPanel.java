@@ -199,14 +199,14 @@ public class ApplicationPanel extends JPanel {
 	public void loadEntry(final Entry e) {
 		current = e;
 		fileLabel.setText("Editing '" + e.getFile().getName() + "'");
-		nameField.setText(e.getName());
-		commentField.setText(e.getComment());
-		iconField.setText(e.getIcon());
-		execField.setText(e.getExec());
-		typeField.setText(e.getType());
-		categoryField.setText(e.getCategories());
-		terminalBox.setSelected(e.isTerminal());
-		startupNotifyBox.setSelected(e.isStartupNotify());
+		nameField.setText(e.name);
+		commentField.setText(e.comment);
+		iconField.setText(e.icon);
+		execField.setText(e.exec);
+		typeField.setText(e.type);
+		categoryField.setText(e.categories);
+		terminalBox.setSelected(e.terminal);
+		startupNotifyBox.setSelected(e.startupNotify);
 	}
 
 	/**
@@ -219,14 +219,14 @@ public class ApplicationPanel extends JPanel {
 	public void saveEntry(final Entry entry) throws IOException {
 		if (entry == null)
 			return;
-		entry.setName(nameField.getText());
-		entry.setComment(commentField.getText());
-		entry.setIcon(iconField.getText());
-		entry.setExec(execField.getText());
-		entry.setType(typeField.getText());
-		entry.setCategories(categoryField.getText());
-		entry.setTerminal(terminalBox.isSelected());
-		entry.setStartupNotify(startupNotifyBox.isSelected());
+		entry.name = nameField.getText();
+		entry.comment = commentField.getText();
+		entry.icon = iconField.getText();
+		entry.exec = execField.getText();
+		entry.type = typeField.getText();
+		entry.categories = categoryField.getText();
+		entry.terminal = terminalBox.isSelected();
+		entry.startupNotify = startupNotifyBox.isSelected();
 
 		FileWriter writer = new FileWriter(entry.getFile());
 		writer.write(entry.toContentString());

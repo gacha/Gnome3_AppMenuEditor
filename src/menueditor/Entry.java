@@ -16,11 +16,6 @@ public class Entry implements Comparable<Entry> {
 	 */
 	private final File file;
 
-	/*
-	 * ENTRY STATE. I have violated standard java lowerCamelCase because I want
-	 * the fields to match their file representations.
-	 */
-
 	/**
 	 * The necessary first line.
 	 */
@@ -29,42 +24,42 @@ public class Entry implements Comparable<Entry> {
 	/**
 	 * The name of the application.
 	 */
-	private String Name = "";
+	public String name = "";
 
 	/**
 	 * A crafty little comment.
 	 */
-	private String Comment = "";
+	public String comment = "";
 
 	/**
 	 * Absolute link to the application icon.
 	 */
-	private String Icon = "";
+	public String icon = "";
 
 	/**
-	 * Abs. link to executable.
+	 * Absolute link to executable.
 	 */
-	private String Exec = "";
+	public String exec = "";
 
 	/**
 	 * if true, run in terminal.
 	 */
-	private boolean Terminal = false;
+	public boolean terminal = false;
 
 	/**
 	 * The type, usually 'Application'.
 	 */
-	private String Type = "Application";
+	public String type = "Application";
 
 	/**
 	 * Game;TimeWaster;etc..
 	 */
-	private String Categories = "";
+	public String categories = "";
 
 	/**
 	 * if true, notify on startup.
 	 */
-	private boolean StartupNotify = false;
+	public boolean startupNotify = false;
 
 	public Entry(final File file) throws FileNotFoundException {
 		this.file = file;
@@ -86,27 +81,27 @@ public class Entry implements Comparable<Entry> {
 
 			// Categorize
 			if (line.contains("Name"))
-				Name = payload;
+				name = payload;
 			else if (line.contains("Comment"))
-				Comment = payload;
+				comment = payload;
 			else if (line.contains("Icon"))
-				Icon = payload;
+				icon = payload;
 			else if (line.contains("Exec"))
-				Exec = payload;
+				exec = payload;
 			else if (line.contains("Type"))
-				Type = payload;
+				type = payload;
 			else if (line.contains("Categories"))
-				Categories = payload;
+				categories = payload;
 			else if (line.contains("Terminal"))
-				Terminal = payload.contains("true");
+				terminal = payload.contains("true");
 			else if (line.contains("StartupNotify"))
-				StartupNotify = payload.contains("true");
+				startupNotify = payload.contains("true");
 		}
 	}
 
 	@Override
 	public String toString() {
-		return Name.length() > 0 ? Name + "  (" + file.getName() + ")": file.getName();
+		return name.length() > 0 ? name + "  (" + file.getName() + ")": file.getName();
 	}
 
 	/**
@@ -118,14 +113,14 @@ public class Entry implements Comparable<Entry> {
 	public String toContentString() {
 		StringBuffer s = new StringBuffer();
 		s.append(HEADER).append("\n");
-		s.append("Name=").append(Name).append("\n");
-		s.append("Comment=").append(Comment).append("\n");
-		s.append("Icon=").append(Icon).append("\n");
-		s.append("Exec=").append(Exec).append("\n");
-		s.append("Type=").append(Type).append("\n");
-		s.append("Categories=").append(Categories).append("\n");
-		s.append("Terminal=").append(Terminal ? "true" : "false").append("\n");
-		s.append("StartupNotify=").append(StartupNotify ? "true" : "false")
+		s.append("Name=").append(name).append("\n");
+		s.append("Comment=").append(comment).append("\n");
+		s.append("Icon=").append(icon).append("\n");
+		s.append("Exec=").append(exec).append("\n");
+		s.append("Type=").append(type).append("\n");
+		s.append("Categories=").append(categories).append("\n");
+		s.append("Terminal=").append(terminal ? "true" : "false").append("\n");
+		s.append("StartupNotify=").append(startupNotify ? "true" : "false")
 				.append("\n");
 		return s.toString();
 	}
@@ -134,77 +129,13 @@ public class Entry implements Comparable<Entry> {
 	 * Getters and setters! YES I LOVE ENCAPSULATION.
 	 */
 
-	public String getName() {
-		return Name;
-	}
-
-	public String getComment() {
-		return Comment;
-	}
-
-	public String getIcon() {
-		return Icon;
-	}
-
-	public String getExec() {
-		return Exec;
-	}
-
-	public boolean isTerminal() {
-		return Terminal;
-	}
-
-	public String getType() {
-		return Type;
-	}
-
-	public String getCategories() {
-		return Categories;
-	}
-
-	public boolean isStartupNotify() {
-		return StartupNotify;
-	}
-
-	public void setName(String name) {
-		Name = name;
-	}
-
-	public void setComment(String comment) {
-		Comment = comment;
-	}
-
-	public void setIcon(String icon) {
-		Icon = icon;
-	}
-
-	public void setExec(String exec) {
-		Exec = exec;
-	}
-
-	public void setTerminal(boolean terminal) {
-		Terminal = terminal;
-	}
-
-	public void setType(String type) {
-		Type = type;
-	}
-
-	public void setCategories(String categories) {
-		Categories = categories;
-	}
-
-	public void setStartupNotify(boolean startupNotify) {
-		StartupNotify = startupNotify;
-	}
-
 	public File getFile() {
 		return file;
 	}
 
 	@Override
 	public int compareTo(Entry o) {
-		return Name.compareTo(o.getName());
+		return name.compareTo(o.name);
 	}
 
 	@Override
