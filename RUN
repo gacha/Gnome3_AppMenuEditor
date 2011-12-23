@@ -1,0 +1,4 @@
+javac src/menueditor/*.java
+mkdir menueditor
+mv src/menueditor/*.class menueditor/
+java menueditor.Gnome3MenuEditor
