@@ -22,4 +22,4 @@ Main features are complete. You can add/remove/edit desktop entries! Does not su
 
 -toriscope
 
-![Screenshot 1 size reduced](http://www.prism.gatech.edu/~efruchter3/gme1.png)
+![Screenshot 1 size reduced](https://github.com/downloads/efruchter/Gnome3_AppMenuEditor/screenshot.png)
