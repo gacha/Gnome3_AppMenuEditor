@@ -2,10 +2,6 @@ A GUI for manipulating the Application menu of Gnome 3, because it is not as eas
 
 Note:
 
-Gnome 3 has progressed quite a bunch since I finished this project.
-
-You might want to consider trying "alacarte" instead of this.
-
 To compile the code from source and run it, use the script:
 ./RUN
 
