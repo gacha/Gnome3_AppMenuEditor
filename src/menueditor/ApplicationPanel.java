@@ -390,10 +390,21 @@ public class ApplicationPanel extends JPanel {
 				JFileChooser fc = new JFileChooser();
 				int returnVal = fc.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					field.setText(fc.getSelectedFile().getAbsolutePath());
+					field.setText(sanitizePath(fc.getSelectedFile().getAbsolutePath()));
 				}
 			}
 		};
+	}
+
+	/**
+	 * Adds path into quotes, to allow filenames with spaces
+	 *
+	 * @param patrh
+	 *
+	 * @return sanitized path
+	 */
+	private String sanitizePath(String path){
+		return ('"' + path.replaceAll("\"", "\\\\\"") + '"');
 	}
 
 	/**
